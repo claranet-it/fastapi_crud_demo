@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "fastapi-crud-demo"
+version = "0.1.0"
+description = ""
+authors = ["Massimo Biagioli <biagiolimassimo@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.109.0"}
+uvicorn = {extras = ["standard"], version = "^0.25.0"}
+pytest = "^7.4.4"
+pytest-cov = "^4.1.0"
+psycopg2-binary = "^2.9.9"
+sqlmodel = "^0.0.14"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.12.1"
+isort = "^5.13.2"
+flake8 = "^7.0.0"
+bandit = "^1.7.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
