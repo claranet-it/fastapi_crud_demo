@@ -1,4 +1,4 @@
-.PHONY: up down logs status start-local check-code-quality fix-code-quality test test-coverage help
+.PHONY: up down logs status start-local check-code-quality fix-code-quality create-migration migrate test test-coverage help
 .DEFAULT_GOAL := help
 app-name = fastapi_crud_demo
 run-docker-compose = docker compose -f docker-compose.yml
@@ -8,6 +8,7 @@ run-black = poetry run black
 run-isort = poetry run isort
 run-flake8 = poetry run flake8
 run-bandit = poetry run bandit
+run-alembic = poetry run alembic
 
 up: # Start containers and tail logs
 	$(run-docker-compose) up -d
@@ -23,6 +24,12 @@ status: # Show status of all containers
 
 start-local: # Start dev environment
 	$(run-uvicorn) $(app-name).main:app --reload
+
+create-migration: # Create migration
+	$(run-alembic) revision --autogenerate -m "$(message)"
+
+migrate: # Run migration
+	$(run-alembic) upgrade head
 
 test:
 ifdef filter

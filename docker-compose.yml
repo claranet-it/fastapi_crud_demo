@@ -4,23 +4,24 @@ services:
     image: public.ecr.aws/docker/library/postgres:16-alpine
     restart: always
     environment:
+      - POSTGRES_USER=fastapi_crud_demo
+      - POSTGRES_PASSWORD=fastapi_crud_demo
+      - POSTGRES_DB=fastapi_crud_demo
       - DATABASE_URL=${DATABASE_URL}
-      - POSTGRES_PASSWORD=password
     ports:
       - '5432:5432'
     volumes:
       - ./pg_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
   postgres_test:
     image: public.ecr.aws/docker/library/postgres:16-alpine
     restart: always
     environment:
+      - POSTGRES_USER=fastapi_crud_demo
+      - POSTGRES_PASSWORD=fastapi_crud_demo
+      - POSTGRES_DB=fastapi_crud_demo
       - DATABASE_URL=${DATABASE_URL_TEST}
-      - POSTGRES_PASSWORD=password
     ports:
       - '5433:5432'
-    volumes:
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 volumes:
   postgres:
     driver: local
