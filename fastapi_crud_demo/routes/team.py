@@ -2,7 +2,6 @@ import uuid
 from http import HTTPStatus
 
 from fastapi import APIRouter
-
 from models.team import Team, TeamCreate, TeamUpdate
 
 router = APIRouter(
