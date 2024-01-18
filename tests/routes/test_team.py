@@ -23,7 +23,7 @@ def test_create(client, new_team_request):
     payload = new_team_request()
     response = client.post(
         "/api/team",
-        content=payload.json(),
+        content=payload.model_dump_json(),
     )
 
     assert response.status_code == HTTPStatus.CREATED
@@ -41,7 +41,7 @@ def test_update(client, team_id, new_team_request):
     )
     response = client.patch(
         f"/api/team/{team_id}",
-        content=payload.json(),
+        content=payload.model_dump_json(),
     )
 
     assert response.status_code == HTTPStatus.OK

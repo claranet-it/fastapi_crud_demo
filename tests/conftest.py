@@ -1,8 +1,8 @@
 import pytest
 from starlette.testclient import TestClient
 
-from main import app
-from models.team import TeamCreate
+from fastapi_crud_demo.main import app
+from fastapi_crud_demo.models.team import TeamCreate
 
 
 @pytest.fixture(scope="function")

@@ -1,8 +1,7 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from routes import team
 
-from fastapi_crud_demo.routes import health
+from fastapi_crud_demo.routes import health, team
 
 load_dotenv()
 

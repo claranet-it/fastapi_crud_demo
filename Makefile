@@ -31,14 +31,14 @@ create-migration: # Create migration
 migrate: # Run migration
 	$(run-alembic) upgrade head
 
-test:
+test: # Run tests
 ifdef filter
 	$(run-pytest) $(filter) -vv
 else
 	$(run-pytest) -vv
 endif
 
-test-coverage: test
+test-coverage: test # Run tests with coverage
 	$(run-pytest) --cov-report term-missing --cov=$(app-name)
 
 check-code-quality: # Run code quality checks

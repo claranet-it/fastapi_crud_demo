@@ -2,7 +2,8 @@ import uuid
 from http import HTTPStatus
 
 from fastapi import APIRouter
-from models.team import Team, TeamCreate, TeamUpdate
+
+from fastapi_crud_demo.models.team import Team, TeamCreate, TeamUpdate
 
 router = APIRouter(
     prefix="/api/team",
@@ -27,7 +28,7 @@ async def read(team_id: uuid.UUID) -> Team:
 async def create(team: TeamCreate) -> Team:
     return Team(
         id=uuid.uuid4(),
-        **team.dict(),
+        **team.model_dump(),
     )
 
 
@@ -35,7 +36,7 @@ async def create(team: TeamCreate) -> Team:
 async def update(team_id: uuid.UUID, team: TeamUpdate) -> Team:
     return Team(
         id=team_id,
-        **team.dict(),
+        **team.model_dump(),
     )
 
 
