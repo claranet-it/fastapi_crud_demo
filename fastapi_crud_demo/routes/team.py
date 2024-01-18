@@ -4,6 +4,7 @@ from http import HTTPStatus
 from fastapi import APIRouter
 
 from fastapi_crud_demo.models.team import Team, TeamCreate, TeamUpdate
+from fastapi_crud_demo.use_cases import team
 
 router = APIRouter(
     prefix="/api/team",
@@ -12,34 +13,24 @@ router = APIRouter(
 
 @router.get("/")
 async def list_all() -> list[Team]:
-    return []
+    return await team.list_all_teams()
 
 
 @router.get("/{team_id}")
 async def read(team_id: uuid.UUID) -> Team:
-    return Team(
-        id=team_id,
-        name="Team 1",
-        description="Team 1 description",
-    )
+    return await team.read(team_id=team_id)
 
 
 @router.post("/", response_model=Team, status_code=HTTPStatus.CREATED)
-async def create(team: TeamCreate) -> Team:
-    return Team(
-        id=uuid.uuid4(),
-        **team.model_dump(),
-    )
+async def create(data: TeamCreate) -> Team:
+    return await team.create(data=data)
 
 
 @router.patch("/{team_id}", response_model=Team, status_code=HTTPStatus.OK)
-async def update(team_id: uuid.UUID, team: TeamUpdate) -> Team:
-    return Team(
-        id=team_id,
-        **team.model_dump(),
-    )
+async def update(team_id: uuid.UUID, data: TeamUpdate) -> Team:
+    return await team.update(team_id=team_id, data=data)
 
 
 @router.delete("/{team_id}", status_code=HTTPStatus.NO_CONTENT)
 async def delete(team_id: uuid.UUID) -> None:
-    return
+    return await team.delete(team_id=team_id)
