@@ -1,9 +1,15 @@
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-DATABASE_URL = "postgresql+asyncpg://fastapi_crud_demo:fastapi_crud_demo@localhost:5432/fastapi_crud_demo"
+from settings import get_settings
 
-engine = create_async_engine(DATABASE_URL, echo=True, future=True)
+settings = get_settings()
+
+engine = create_async_engine(
+    url=settings.database_url,
+    echo=True,
+    future=True
+)
 
 
 async def get_session():
