@@ -1,6 +1,10 @@
+import logging
+
 from fastapi import FastAPI
 
-from fastapi_crud_demo.routes import health, user, team
+from fastapi_crud_demo.routes import health, team, user
+
+logging.getLogger("passlib").setLevel(logging.ERROR)
 
 app = FastAPI()
 

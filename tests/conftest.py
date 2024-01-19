@@ -8,7 +8,8 @@ from fastapi_crud_demo.db import get_session
 from fastapi_crud_demo.main import app
 from fastapi_crud_demo.models.team import TeamCreate, Team
 from fastapi_crud_demo.settings import get_settings
-from fastapi_crud_demo.use_cases import team
+from fastapi_crud_demo.use_cases import team, user
+from fastapi_crud_demo.models.user import UserCreate, User
 
 settings = get_settings()
 
@@ -64,3 +65,17 @@ def create_team(session):
 @pytest.fixture(scope="function")
 def wrong_id() -> str:
     return 'c0a80101-0000-0000-0000-000000000001'
+
+
+@pytest.fixture(scope="function")
+def create_user(session):
+    async def _create_user(email: str = None, password: str = None) -> User:
+        return await user.register(
+            session,
+            UserCreate(
+                email=email or "testuser@email.com",
+                password=password or "ZXCV9876,."
+            )
+        )
+
+    return _create_user

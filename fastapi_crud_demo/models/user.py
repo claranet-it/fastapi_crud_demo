@@ -19,3 +19,7 @@ class User(UserBase, table=True):
 
 class UserCreate(UserBase):
     pass
+
+
+class UserLogin(UserBase):
+    pass
