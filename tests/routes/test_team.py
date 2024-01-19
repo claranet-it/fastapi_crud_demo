@@ -28,11 +28,7 @@ async def test_get(client: AsyncClient, create_team):
     response = await client.get(url=f"/api/team/{team.id}")
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {
-        "id": str(team.id),
-        "name": "Team 1",
-        "description": "Team 1 description",
-    }
+    assert response.json() == {**team.model_dump(), "id": str(team.id)}
 
 
 @pytest.mark.asyncio
@@ -69,11 +65,7 @@ async def test_update(client: AsyncClient, create_team):
     )
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {
-        "id": str(team.id),
-        "name": "Team 1 Updated",
-        "description": "Team 1 Description Updated",
-    }
+    assert response.json() == {**team.model_dump(), **payload.model_dump(), "id": str(team.id)}
 
 
 @pytest.mark.asyncio
