@@ -17,6 +17,7 @@ greenlet = "^3.0.3"
 alembic = "^1.13.1"
 python-dotenv = "^1.0.0"
 pydantic-settings = "^2.1.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
 
 [tool.poetry.group.dev.dependencies]

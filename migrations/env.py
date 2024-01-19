@@ -12,6 +12,7 @@ from sqlmodel import SQLModel
 from alembic import context
 
 from fastapi_crud_demo.models.team import Team
+from fastapi_crud_demo.models.user import User
 
 
 load_dotenv()
