@@ -3,11 +3,7 @@ import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
-from fastapi_crud_demo.models.team import (
-    Team,
-    TeamCreate,
-    TeamUpdate
-)
+from fastapi_crud_demo.models.team import Team, TeamCreate, TeamUpdate
 
 
 async def list_all_teams(session: AsyncSession) -> list[Team]:
