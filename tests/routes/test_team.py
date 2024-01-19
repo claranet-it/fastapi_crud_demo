@@ -32,6 +32,14 @@ async def test_get(client: AsyncClient, create_team):
 
 
 @pytest.mark.asyncio
+async def test_get_not_found(client: AsyncClient, wrong_id: str):
+    response = await client.get(url=f"/api/team/{wrong_id}")
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "Team not found"}
+
+
+@pytest.mark.asyncio
 async def test_create(client: AsyncClient):
     payload = TeamCreate(
         name="New Team",

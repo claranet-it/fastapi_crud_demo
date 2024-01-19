@@ -1,7 +1,7 @@
 import uuid
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi_crud_demo.db import get_session
@@ -18,11 +18,14 @@ async def list_all(session: AsyncSession = Depends(get_session)) -> list[Team]:
     return await team.list_all_teams(session=session)
 
 
-@router.get("/{team_id}")
+@router.get("/{team_id}", response_model=Team, status_code=HTTPStatus.OK)
 async def read(
     team_id: uuid.UUID, session: AsyncSession = Depends(get_session)
 ) -> Team:
-    return await team.read(session=session, team_id=team_id)
+    result = await team.read(session=session, team_id=team_id)
+    if result is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Team not found")
+    return result
 
 
 @router.post("/", response_model=Team, status_code=HTTPStatus.CREATED)

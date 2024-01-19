@@ -59,3 +59,8 @@ def create_team(session):
         )
 
     return _create_team
+
+
+@pytest.fixture(scope="function")
+def wrong_id() -> str:
+    return 'c0a80101-0000-0000-0000-000000000001'
