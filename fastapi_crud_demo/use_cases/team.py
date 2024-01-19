@@ -27,9 +27,14 @@ async def create(session: AsyncSession, data: TeamCreate) -> Team:
     return team
 
 
-async def update(session: AsyncSession, team_id: uuid.UUID, data: TeamUpdate) -> Team:
+async def update(
+    session: AsyncSession, team_id: uuid.UUID, data: TeamUpdate
+) -> Union[Team, None]:
     result = await session.execute(select(Team).where(Team.id == team_id))
     team = result.scalars().first()
+    if team is None:
+        return None
+
     for field, value in data.model_dump().items():
         if value is not None:
             setattr(team, field, value)
@@ -38,8 +43,13 @@ async def update(session: AsyncSession, team_id: uuid.UUID, data: TeamUpdate) ->
     return team
 
 
-async def delete(session: AsyncSession, team_id: uuid.UUID) -> None:
+async def delete(session: AsyncSession, team_id: uuid.UUID) -> Union[Team, None]:
     result = await session.execute(select(Team).where(Team.id == team_id))
     team = result.scalars().first()
+    if team is None:
+        return None
+
     await session.delete(team)
     await session.commit()
+
+    return team

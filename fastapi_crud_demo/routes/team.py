@@ -39,11 +39,16 @@ async def create(
 async def update(
     team_id: uuid.UUID, data: TeamUpdate, session: AsyncSession = Depends(get_session)
 ) -> Team:
-    return await team.update(session=session, team_id=team_id, data=data)
+    result = await team.update(session=session, team_id=team_id, data=data)
+    if result is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Team not found")
+    return result
 
 
 @router.delete("/{team_id}", status_code=HTTPStatus.NO_CONTENT)
 async def delete(
     team_id: uuid.UUID, session: AsyncSession = Depends(get_session)
 ) -> None:
-    return await team.delete(session=session, team_id=team_id)
+    result = await team.delete(session=session, team_id=team_id)
+    if result is None:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Team not found")

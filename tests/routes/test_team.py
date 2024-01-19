@@ -77,9 +77,33 @@ async def test_update(client: AsyncClient, create_team):
 
 
 @pytest.mark.asyncio
+async def test_update_not_found(client: AsyncClient, wrong_id: str):
+    payload = TeamUpdate(
+        name="Team 1 Updated",
+        description="Team 1 Description Updated",
+    )
+
+    response = await client.patch(
+        f"/api/team/{wrong_id}",
+        content=payload.model_dump_json(),
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "Team not found"}
+
+
+@pytest.mark.asyncio
 async def test_delete(client: AsyncClient, create_team):
     team = await create_team(name="Team 1", description="Team 1 description")
 
     response = await client.delete(f"/api/team/{team.id}")
 
     assert response.status_code == HTTPStatus.NO_CONTENT
+
+
+@pytest.mark.asyncio
+async def test_delete_not_found(client: AsyncClient, wrong_id: str):
+    response = await client.delete(f"/api/team/{wrong_id}")
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "Team not found"}
