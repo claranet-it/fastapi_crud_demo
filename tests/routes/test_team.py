@@ -26,6 +26,15 @@ async def test_list_all(client: AsyncClient, create_team, jwt_token):
 
 
 @pytest.mark.asyncio
+async def test_list_all_without_authentication(client: AsyncClient):
+    response = await client.get(
+        url="/api/team/"
+    )
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+
+@pytest.mark.asyncio
 async def test_get(client: AsyncClient, create_team, jwt_token):
     token_response = await jwt_token()
     team = await create_team(name="Team 1", description="Team 1 description")
