@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi_crud_demo.db import get_session
+from fastapi_crud_demo.libs.auth import authenticate
 from fastapi_crud_demo.models.error import ErrorResponse
 from fastapi_crud_demo.models.token import TokenResponse
-from fastapi_crud_demo.models.user import User, UserCreate, UserLogin
+from fastapi_crud_demo.models.user import CurrentUser, User, UserCreate, UserLogin
 from fastapi_crud_demo.use_cases import user
 
 router = APIRouter(
@@ -33,3 +34,10 @@ async def login(
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Login failed")
 
     return login_result
+
+
+@router.get("/me", response_model=CurrentUser, status_code=HTTPStatus.OK)
+async def get_current_user(
+    session: AsyncSession = Depends(get_session), auth_user: str = Depends(authenticate)
+) -> CurrentUser:
+    return await user.get_current_user(session=session, email=auth_user)

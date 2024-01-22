@@ -78,3 +78,20 @@ async def test_login_wrong_password(client: AsyncClient, create_user):
 
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {"detail": "Login failed"}
+
+
+@pytest.mark.asyncio
+async def test_get_current_user(client: AsyncClient, jwt_token):
+    token_response = await jwt_token()
+
+    response = await client.get(
+        url="/api/user/me",
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
+    )
+
+    assert response.status_code == HTTPStatus.OK
+
+    response_model = response.json()
+    assert response_model["id"] is not None
+    assert len(response_model["id"]) == 36
+    assert response_model["email"] == "tester@email.com"

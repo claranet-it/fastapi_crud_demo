@@ -19,7 +19,7 @@ services:
       - POSTGRES_USER=fastapi_crud_demo
       - POSTGRES_PASSWORD=fastapi_crud_demo
       - POSTGRES_DB=fastapi_crud_demo
-      - DATABASE_URL=${DATABASE_URL_TEST}
+      - DATABASE_URL=${DATABASE_TEST_URL}
     ports:
       - '5433:5432'
 volumes:
