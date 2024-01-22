@@ -1,3 +1,5 @@
+from typing import Union
+
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient
@@ -9,7 +11,9 @@ from fastapi_crud_demo.main import app
 from fastapi_crud_demo.models.team import TeamCreate, Team
 from fastapi_crud_demo.settings import get_settings
 from fastapi_crud_demo.use_cases import team, user
-from fastapi_crud_demo.models.user import UserCreate, User
+from fastapi_crud_demo.models.user import UserCreate, User, UserLogin
+from fastapi_crud_demo.models.error import ErrorResponse
+from fastapi_crud_demo.models.token import TokenResponse
 
 settings = get_settings()
 
@@ -79,3 +83,28 @@ def create_user(session):
         )
 
     return _create_user
+
+
+@pytest.fixture(scope="function")
+def jwt_token(session):
+    async def _jwt_token(email: str = None, password: str = None) -> Union[TokenResponse, ErrorResponse, None]:
+        email = email or "tester@email.com"
+        password = password or "Password1234!!"
+
+        await user.register(
+            session=session,
+            data=UserCreate(
+                email=email,
+                password=password
+            )
+        )
+
+        return await user.login(
+            session=session,
+            data=UserLogin(
+                email=email,
+                password=password
+            )
+        )
+
+    return _jwt_token

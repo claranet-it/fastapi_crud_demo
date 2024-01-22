@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi_crud_demo.db import get_session
+from fastapi_crud_demo.models.error import ErrorResponse
+from fastapi_crud_demo.models.token import TokenResponse
 from fastapi_crud_demo.models.user import User, UserCreate, UserLogin
 from fastapi_crud_demo.use_cases import user
 
@@ -19,13 +21,15 @@ async def register(
     return await user.register(session=session, data=data)
 
 
-@router.post("/login", response_model=dict, status_code=HTTPStatus.OK)
-async def login(data: UserLogin, session: AsyncSession = Depends(get_session)) -> dict:
+@router.post("/login", response_model=TokenResponse, status_code=HTTPStatus.OK)
+async def login(
+    data: UserLogin, session: AsyncSession = Depends(get_session)
+) -> TokenResponse:
     login_result = await user.login(session=session, data=data)
     if login_result is None:
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Login failed")
 
-    if "error" in login_result:
+    if isinstance(login_result, ErrorResponse):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Login failed")
 
     return login_result

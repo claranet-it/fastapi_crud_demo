@@ -7,11 +7,15 @@ from fastapi_crud_demo.models.team import TeamCreate, TeamUpdate
 
 
 @pytest.mark.asyncio
-async def test_list_all(client: AsyncClient, create_team):
+async def test_list_all(client: AsyncClient, create_team, jwt_token):
+    token_response = await jwt_token()
     team1 = await create_team(name="Team 1", description="Team 1 description")
     team2 = await create_team(name="Team 2", description="Team 2 description")
 
-    response = await client.get(url="/api/team/")
+    response = await client.get(
+        url="/api/team/",
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
+    )
 
     assert response.status_code == HTTPStatus.OK
     teams = response.json()
@@ -22,25 +26,34 @@ async def test_list_all(client: AsyncClient, create_team):
 
 
 @pytest.mark.asyncio
-async def test_get(client: AsyncClient, create_team):
+async def test_get(client: AsyncClient, create_team, jwt_token):
+    token_response = await jwt_token()
     team = await create_team(name="Team 1", description="Team 1 description")
 
-    response = await client.get(url=f"/api/team/{team.id}")
+    response = await client.get(
+        url=f"/api/team/{team.id}",
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {**team.model_dump(), "id": str(team.id)}
 
 
 @pytest.mark.asyncio
-async def test_get_not_found(client: AsyncClient, wrong_id: str):
-    response = await client.get(url=f"/api/team/{wrong_id}")
+async def test_get_not_found(client: AsyncClient, wrong_id: str, jwt_token):
+    token_response = await jwt_token()
+    response = await client.get(
+        url=f"/api/team/{wrong_id}",
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
+    )
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {"detail": "Team not found"}
 
 
 @pytest.mark.asyncio
-async def test_create(client: AsyncClient):
+async def test_create(client: AsyncClient, jwt_token):
+    token_response = await jwt_token()
     payload = TeamCreate(
         name="New Team",
         description="New Team description"
@@ -48,6 +61,7 @@ async def test_create(client: AsyncClient):
     response = await client.post(
         url="/api/team/",
         content=payload.model_dump_json(),
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
     )
 
     assert response.status_code == HTTPStatus.CREATED
@@ -59,7 +73,8 @@ async def test_create(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_update(client: AsyncClient, create_team):
+async def test_update(client: AsyncClient, create_team, jwt_token):
+    token_response = await jwt_token()
     team = await create_team(name="Team 1", description="Team 1 description")
 
     payload = TeamUpdate(
@@ -70,6 +85,7 @@ async def test_update(client: AsyncClient, create_team):
     response = await client.patch(
         f"/api/team/{team.id}",
         content=payload.model_dump_json(),
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
     )
 
     assert response.status_code == HTTPStatus.OK
@@ -77,7 +93,8 @@ async def test_update(client: AsyncClient, create_team):
 
 
 @pytest.mark.asyncio
-async def test_update_not_found(client: AsyncClient, wrong_id: str):
+async def test_update_not_found(client: AsyncClient, wrong_id: str, jwt_token):
+    token_response = await jwt_token()
     payload = TeamUpdate(
         name="Team 1 Updated",
         description="Team 1 Description Updated",
@@ -86,6 +103,7 @@ async def test_update_not_found(client: AsyncClient, wrong_id: str):
     response = await client.patch(
         f"/api/team/{wrong_id}",
         content=payload.model_dump_json(),
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
     )
 
     assert response.status_code == HTTPStatus.NOT_FOUND
@@ -93,17 +111,25 @@ async def test_update_not_found(client: AsyncClient, wrong_id: str):
 
 
 @pytest.mark.asyncio
-async def test_delete(client: AsyncClient, create_team):
+async def test_delete(client: AsyncClient, create_team, jwt_token):
+    token_response = await jwt_token()
     team = await create_team(name="Team 1", description="Team 1 description")
 
-    response = await client.delete(f"/api/team/{team.id}")
+    response = await client.delete(
+        url=f"/api/team/{team.id}",
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
+    )
 
     assert response.status_code == HTTPStatus.NO_CONTENT
 
 
 @pytest.mark.asyncio
-async def test_delete_not_found(client: AsyncClient, wrong_id: str):
-    response = await client.delete(f"/api/team/{wrong_id}")
+async def test_delete_not_found(client: AsyncClient, wrong_id: str, jwt_token):
+    token_response = await jwt_token()
+    response = await client.delete(
+        url=f"/api/team/{wrong_id}",
+        headers={"Authorization": f"Bearer {token_response.access_token}"}
+    )
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {"detail": "Team not found"}
