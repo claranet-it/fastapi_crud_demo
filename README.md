@@ -149,3 +149,7 @@ Delete team
 curl --location --request DELETE 'http://<server_url>/api/team/ecfa80a2-fa56-4503-a812-985d8a0069f9' \
 --header 'Authorization: Bearer <access_token> \
 ```
+
+## OpenAPI
+
+You can access the OpenAPI documentation at http://<server_url>/docs

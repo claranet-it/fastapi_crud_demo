@@ -11,6 +11,7 @@ from fastapi_crud_demo.use_cases import team
 
 router = APIRouter(
     prefix="/api/team",
+    tags=["team"],
 )
 
 

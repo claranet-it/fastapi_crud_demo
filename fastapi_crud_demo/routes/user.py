@@ -12,6 +12,7 @@ from fastapi_crud_demo.use_cases import user
 
 router = APIRouter(
     prefix="/api/user",
+    tags=["user"],
 )
 
 
