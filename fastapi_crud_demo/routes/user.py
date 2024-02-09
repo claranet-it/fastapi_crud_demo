@@ -1,6 +1,8 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi_crud_demo.db import get_session
@@ -23,11 +25,15 @@ async def register(
     return await user.register(session=session, data=data)
 
 
-@router.post("/login", response_model=TokenResponse, status_code=HTTPStatus.OK)
-async def login(
-    data: UserLogin, session: AsyncSession = Depends(get_session)
+@router.post("/token")
+async def token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: AsyncSession = Depends(get_session),
 ) -> TokenResponse:
-    login_result = await user.login(session=session, data=data)
+    login_result = await user.login(
+        session=session,
+        data=UserLogin(email=form_data.username, password=form_data.password),
+    )
     if login_result is None:
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Login failed")
 

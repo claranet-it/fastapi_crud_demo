@@ -27,17 +27,19 @@ async def test_register(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_login(client: AsyncClient, create_user):
+async def test_token(client: AsyncClient, create_user):
     user = await create_user()
 
-    payload = UserLogin(
-        email=user.email,
-        password="ZXCV9876,."
-    )
+    payload = {
+        "username": user.email,
+        "password": "ZXCV9876,.",
+        "grant_type": "password",
+    }
 
     response = await client.post(
-        url="/api/user/login",
-        content=payload.model_dump_json(),
+        url="/api/user/token",
+        data=payload,
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
     )
 
     assert response.status_code == HTTPStatus.OK
@@ -47,15 +49,16 @@ async def test_login(client: AsyncClient, create_user):
 
 
 @pytest.mark.asyncio
-async def test_login_user_not_found(client: AsyncClient):
-    payload = UserLogin(
-        email="wrong-user@email.com",
-        password="ASdf12345!."
-    )
+async def test_token_user_not_found(client: AsyncClient):
+    payload = {
+        "username": "wrong-user@email.com",
+        "password": "ASdf12345!.",
+        "grant_type": "password",
+    }
 
     response = await client.post(
-        url="/api/user/login",
-        content=payload.model_dump_json(),
+        url="/api/user/token",
+        data=payload,
     )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
@@ -66,14 +69,15 @@ async def test_login_user_not_found(client: AsyncClient):
 async def test_login_wrong_password(client: AsyncClient, create_user):
     user = await create_user()
 
-    payload = UserLogin(
-        email=user.email,
-        password="wrong-password"
-    )
+    payload = {
+        "username": user.email,
+        "password": "wrong-password",
+        "grant_type": "password",
+    }
 
     response = await client.post(
-        url="/api/user/login",
-        content=payload.model_dump_json(),
+        url="/api/user/token",
+        data=payload,
     )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
